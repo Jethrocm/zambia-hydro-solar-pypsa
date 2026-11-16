@@ -80,6 +80,8 @@ Every assumption, with its source or the reason for it, is in [`config.yaml`](co
 
 ## Run it
 
+Requires Python 3.11 or newer (tested with Python 3.13).
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate        # On Windows: .venv\Scripts\activate
@@ -97,6 +99,8 @@ python run_all.py
 | 3 | `make_figures.py` | `results/figures/*.png` |
 
 `build_network.py` holds the network definition and is used by step 2.
+
+The `data/` and `resources/` folders are not in the repo because `run_all.py` creates them: step 0 downloads the cost file from PyPSA technology-data, and step 1 builds the hourly profiles from `config.yaml`. The first run needs an internet connection.
 
 ## Data sources
 
