@@ -1,0 +1,74 @@
+# Zambia hydro-solar model: all assumptions in one place.
+# Every number has a "basis" note. "Assumption" means a modelling choice to revisit,
+# not a published figure. Costs and prices are in EUR, the currency of PyPSA technology-data.
+
+year: 2026
+timezone: Africa/Lusaka
+location: {lat: -15.42, lon: 28.28, altitude_m: 1280, name: Lusaka}
+
+demand:
+  peak_mw: 2400            # Ministry of Energy: peak demand about 2,400 MW (2025/2026)
+  average_mw: 2000         # Assumption: ~17.5 TWh/yr. ERB reported 15.5 TWh consumed in 2025, while supply was constrained
+  mining_share: 0.55       # Ministry of Energy: mining is 55% of consumption; modelled as a flat load
+
+hydro_reservoirs:
+  # Annual water budget expressed as average output in MW. Storage is sized so water can be
+  # shifted freely within the year (cyclic), i.e. the annual budget is the binding constraint.
+  kariba_north_bank:
+    p_nom_mw: 1080         # ZESCO press release, 29 June 2024
+    budget_mw:
+      normal: 548          # Long-term-average allocation ~20.5 BCM for Zambia (2024's 16 BCM total was 61% below average), x 26.75 MW per BCM
+      drought: 214         # 2024: 8 BCM to ZESCO, about 214 MW average (ZRA allocation as reported by Engineering News)
+  kafue_cascade:           # Itezhi-Tezhi (120) + Kafue Gorge Upper (990) + Kafue Gorge Lower (750), aggregated
+    p_nom_mw: 1860         # ZESCO press release, 29 June 2024
+    budget_mw:
+      normal: 1197         # KGU 6,666 GWh in 2014 (761 MW avg, ERB); KGL and ITT scaled by KGU's normal/drought ratio
+      drought: 585         # ZESCO, June 2024: KGU 372 + KGL 179 + ITT 34 MW
+
+run_of_river:
+  p_nom_mw: 146            # Victoria Falls (108) plus small hydro: Ministry hydro total (79.6% of 3,877 MW) less the four plants above
+  capacity_factor:
+    normal: 0.70           # Assumption
+    drought: 0.35          # Assumption: record-low Zambezi flows at Victoria Falls in 2024
+
+solar:
+  p_nom_mw: 841            # Ministry of Energy: solar capacity 841 MW in 2026
+  annual_cf: 0.19          # Zambian plants measured at 16.6-19.8% (UNZA study); Bangweulu 87 GWh/yr from 54.3 MWp (18.3%)
+  tilt_deg: 15             # Assumption: fixed tilt, facing north
+  monthly_cloud_factor:    # Assumption: stylised rainy-season cloud cover, Jan..Dec. Replace with atlite or renewables.ninja data
+    [0.70, 0.72, 0.80, 0.92, 0.97, 0.97, 0.97, 0.97, 0.95, 0.93, 0.85, 0.72]
+
+thermal:
+  coal:   {p_nom_mw: 300, availability: 0.85}   # Maamba Phase I (Ministry: coal 7.7% of 3,877 MW). Phase II (+300 MW) not included
+  hfo:    {p_nom_mw: 186, availability: 0.85}   # Ministry: HFO/diesel 4.8% of 3,877 MW
+
+imports:
+  p_nom_mw: 400            # Assumption: regional imports cap (ZESCO imported up to 188 MW from Mozambique in June 2024)
+  price_eur_mwh: 120       # Assumption
+
+exports:
+  p_nom_mw: 520            # ZESCO: exports were 520 MW in February 2024, cut to 281 MW by June 2024
+  price_eur_mwh: 60        # Assumption: price received for exports
+
+load_shedding:
+  voll_eur_mwh: 1000       # Assumption: value of lost load
+  tiers: 8                 # Shortfall is split into 8 equal blocks of peak demand, each 50 EUR/MWh
+  tier_step_eur_mwh: 50    # dearer than the last. Deeper cuts cost more, so shortfalls spread across
+                           # hours like rotational load shedding instead of landing at random
+
+economics:
+  discount_rate: 0.10      # Assumption: typical for energy projects in emerging markets
+  costs_file: data/costs_2030.csv   # Downloaded by scripts/retrieve_costs.py
+  costs_url: https://raw.githubusercontent.com/PyPSA/technology-data/v0.15.0/outputs/costs_2030.csv
+
+expansion:                 # Used only in the "drought_solar_storage" scenario
+  solar_max_mw: 5000
+  battery_max_mw: 3000
+  battery_hours: 4
+
+scenarios:
+  # exports: false in the expansion run, so new solar is sized for Zambia's own demand
+  # rather than for export sales (solar is cheaper than the assumed export price)
+  normal:                 {hydrology: normal,  expand: false, exports: true}
+  drought:                {hydrology: drought, expand: false, exports: true}
+  drought_solar_storage:  {hydrology: drought, expand: true,  exports: false}

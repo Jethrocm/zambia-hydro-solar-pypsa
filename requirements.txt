@@ -1,0 +1,6 @@
+pypsa==1.4.0
+highspy==1.16.0
+pvlib==0.16.1
+pandas>=2.2
+matplotlib>=3.9
+pyyaml>=6.0

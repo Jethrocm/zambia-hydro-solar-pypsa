@@ -1,0 +1,4 @@
+scenario,demand_TWh,hydro_reservoir_TWh,run_of_river_TWh,solar_TWh,coal_TWh,hfo_TWh,imports_TWh,exports_TWh,unserved_TWh,hours_with_shedding,max_shortfall_MW,new_solar_MW,new_battery_MW,solar_curtailed_TWh,net_cost_MEUR
+normal,17.52,15.286,0.895,1.4,2.234,0.0,0.0,2.295,0.0,0,0.0,0.0,0.0,0.0,-79.473
+drought,17.52,6.999,0.448,1.4,2.234,1.385,3.504,0.0,1.551,5269,300.0,0.0,0.0,0.0,2213.059
+drought_solar_storage,17.52,6.999,0.448,8.516,1.709,0.0,0.0,0.0,0.0,0,0.0,4534.429,1328.844,0.431,481.731

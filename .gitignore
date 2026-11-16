@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+data/
+resources/
+results/networks/
+*.nc
+.ipynb_checkpoints/
